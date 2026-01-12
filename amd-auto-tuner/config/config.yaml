@@ -29,7 +29,7 @@ backup:
 
 # Profile Configuration
 profiles:
-  # Default profile to use: performance, balanced, powersave, gaming, server
+  # Default profile to use: performance, balanced, powersave, gaming, server, hpc
   default: balanced
   # Custom profile overrides (optional)
   custom:
@@ -96,6 +96,44 @@ network:
     # eth0:
     #   ring_buffer_max: true
     #   offloads: true
+
+# HPC Tuning Configuration (for EPYC/Threadripper)
+hpc:
+  # Enable HPC tuning
+  enabled: true
+  # Enable huge pages
+  huge_pages: false
+  # Huge page size: 2M or 1G
+  huge_pages_size: 2M
+  # Number of huge pages to allocate (0 = auto)
+  huge_pages_count: 0
+  # Enable NUMA optimization
+  numa_aware: true
+  # Enable IRQ affinity optimization
+  irq_affinity: false
+  # NUMA memory interleave (all, local, or specific nodes like "0,1")
+  numa_interleave: local
+  # Generate SLURM configuration hints
+  slurm_hints: false
+  # Generate MPI environment hints
+  mpi_hints: false
+
+# Memory Tuning Configuration
+memory:
+  # Enable memory tuning
+  enabled: true
+  # Swappiness value (0-100, lower = prefer RAM)
+  swappiness: 60
+  # Transparent Huge Pages: always, madvise, never
+  thp: madvise
+  # Enable NUMA balancing
+  numa_balancing: true
+  # Zone reclaim mode (0 = disabled, 1 = enabled)
+  zone_reclaim_mode: 0
+  # Dirty ratio (percentage of RAM for dirty pages before sync)
+  dirty_ratio: 20
+  # Dirty background ratio (percentage for background sync)
+  dirty_background_ratio: 10
 
 # Benchmark Configuration
 benchmarks:
