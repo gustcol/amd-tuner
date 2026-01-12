@@ -1,0 +1,23 @@
+[Unit]
+Description=AMD Auto Tuner - Apply performance profile at boot
+Documentation=https://github.com/gustcol/amd-auto-tuner
+After=network.target sysinit.target
+Before=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/amd-tuner auto --apply
+
+# Security hardening
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/sys /proc /var/log
+PrivateTmp=yes
+NoNewPrivileges=yes
+
+# Resource limits
+MemoryLimit=512M
+TimeoutStartSec=120
+
+[Install]
+WantedBy=multi-user.target
