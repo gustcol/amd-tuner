@@ -1,0 +1,43 @@
+# AMD Auto Tuner - Python Dependencies
+# =====================================
+# Install with: pip install -r requirements.txt
+
+# Required Dependencies
+# ---------------------
+# These are required for the core functionality
+
+# YAML configuration file support
+PyYAML>=6.0
+
+# Optional Dependencies
+# ---------------------
+# These enhance functionality but are not strictly required
+
+# For colored terminal output (optional)
+# colorama>=0.4.6
+
+# For progress bars (optional)
+# tqdm>=4.65.0
+
+# For advanced system information (optional)
+# psutil>=5.9.0
+
+# For type checking during development (optional)
+# mypy>=1.0.0
+
+# Development Dependencies
+# ------------------------
+# These are only needed for development/testing
+
+# For running tests
+# pytest>=7.0.0
+
+# For code formatting
+# black>=23.0.0
+
+# For linting
+# flake8>=6.0.0
+# pylint>=2.17.0
+
+# For type checking
+# mypy>=1.0.0

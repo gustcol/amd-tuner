@@ -1,0 +1,19 @@
+[Unit]
+Description=AMD Auto Tuner - Periodic performance optimization
+Documentation=https://github.com/gustcol/amd-auto-tuner
+
+[Timer]
+# Run on boot after 2 minutes delay
+OnBootSec=2min
+
+# Run every hour
+OnUnitActiveSec=1h
+
+# Randomized delay to avoid thundering herd
+RandomizedDelaySec=30
+
+# Make timer persistent across reboots
+Persistent=true
+
+[Install]
+WantedBy=timers.target

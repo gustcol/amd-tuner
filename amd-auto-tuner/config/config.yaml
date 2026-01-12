@@ -1,0 +1,137 @@
+# AMD Auto Tuner Configuration
+# =============================
+# This file contains all configurable options for the AMD Auto Tuner.
+# Modify these settings to customize the tuning behavior for your system.
+
+version: "1.0.0"
+
+# Logging Configuration
+logging:
+  # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  level: INFO
+  # Enable logging to files in the logs/ directory
+  file_logging: true
+  # Enable console output
+  console_logging: true
+  # Maximum log file size in MB before rotation
+  max_log_size_mb: 10
+  # Number of backup log files to keep
+  backup_count: 5
+
+# Backup Configuration
+backup:
+  # Enable automatic backups before applying changes
+  enabled: true
+  # Maximum number of backup files to keep per component
+  max_backups: 10
+  # Automatically restore last backup if changes cause issues
+  auto_restore_on_failure: false
+
+# Profile Configuration
+profiles:
+  # Default profile to use: performance, balanced, powersave, gaming, server
+  default: balanced
+  # Custom profile overrides (optional)
+  custom:
+    # Example custom profile:
+    # my_workload:
+    #   cpu:
+    #     governor: performance
+    #     boost: true
+    #   storage:
+    #     scheduler: mq-deadline
+    #   network:
+    #     congestion_control: bbr
+
+# CPU Tuning Configuration
+cpu:
+  # Enable CPU tuning
+  enabled: true
+  # Automatically detect workload type and adjust settings
+  auto_detect_workload: false
+  # Safe mode: apply conservative settings to prevent instability
+  safe_mode: true
+  # Maximum allowed CPU temperature in Celsius (safety limit)
+  max_temperature_celsius: 85
+  # Preferred governor (if not specified by profile)
+  preferred_governor: schedutil
+  # Enable boost by default
+  default_boost: true
+  # Minimum frequency as percentage of max (0-100)
+  min_freq_percent: 40
+  # Maximum frequency as percentage of max (0-100)
+  max_freq_percent: 100
+
+# Storage Tuning Configuration
+storage:
+  # Enable storage tuning
+  enabled: true
+  # Automatically run TRIM on SSDs/NVMe
+  auto_trim: false
+  # TRIM schedule: daily, weekly, monthly
+  trim_schedule: weekly
+  # Device-specific settings (optional)
+  devices:
+    # Example:
+    # nvme0n1:
+    #   scheduler: none
+    #   read_ahead_kb: 256
+    # sda:
+    #   scheduler: bfq
+    #   read_ahead_kb: 128
+
+# Network Tuning Configuration
+network:
+  # Enable network tuning
+  enabled: true
+  # Apply sysctl optimizations
+  optimize_sysctl: true
+  # Preserve existing custom sysctl settings
+  preserve_custom_sysctl: true
+  # Default congestion control algorithm
+  default_congestion_control: bbr
+  # Interface-specific settings (optional)
+  interfaces:
+    # Example:
+    # eth0:
+    #   ring_buffer_max: true
+    #   offloads: true
+
+# Benchmark Configuration
+benchmarks:
+  # CPU benchmark duration in seconds
+  cpu_duration_seconds: 10
+  # Storage benchmark test file size
+  storage_test_size: 1G
+  # Network ping test count
+  network_ping_count: 10
+  # Default ping target for latency tests
+  network_ping_target: "8.8.8.8"
+  # Run benchmarks before and after tuning to measure improvement
+  compare_before_after: true
+
+# Scheduling Configuration (for automated tuning)
+scheduling:
+  # Enable scheduled tuning
+  enabled: false
+  # Apply performance profile during these hours (24h format)
+  performance_hours:
+    start: 9
+    end: 18
+  # Apply powersave profile during these hours
+  powersave_hours:
+    start: 23
+    end: 6
+
+# Safety Configuration
+safety:
+  # Require confirmation before applying changes
+  require_confirmation: false
+  # Maximum number of retries for failed operations
+  max_retries: 3
+  # Delay between retries in seconds
+  retry_delay_seconds: 1
+  # Excluded devices (never tune these)
+  excluded_devices: []
+  # Excluded interfaces (never tune these)
+  excluded_interfaces: []

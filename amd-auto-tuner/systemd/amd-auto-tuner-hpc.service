@@ -1,0 +1,22 @@
+[Unit]
+Description=AMD Auto Tuner - HPC Performance Profile
+Documentation=https://github.com/gustcol/amd-auto-tuner
+After=network.target slurmd.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/amd-tuner profile hpc
+RemainAfterExit=yes
+
+# Security hardening
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/sys /proc /var/log /dev/hugepages
+PrivateTmp=yes
+
+# Resource limits
+MemoryLimit=1G
+TimeoutStartSec=300
+
+[Install]
+WantedBy=multi-user.target
