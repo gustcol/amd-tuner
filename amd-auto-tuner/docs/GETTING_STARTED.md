@@ -118,6 +118,29 @@ sudo amd-tuner profile balanced
 sudo amd-tuner profile server
 ```
 
+### HPC/Scientific Computing
+
+```bash
+# Apply HPC profile (for EPYC/Threadripper)
+sudo amd-tuner profile hpc
+
+# Or custom HPC tuning
+sudo amd-tuner tune-hpc --huge-pages --numa-aware --irq-affinity
+
+# With 1GB huge pages
+sudo amd-tuner tune-hpc --huge-pages --huge-pages-size 1G
+```
+
+### Memory Optimization
+
+```bash
+# Tune memory for low latency
+sudo amd-tuner tune-memory --swappiness 10 --thp always
+
+# Tune for database workloads
+sudo amd-tuner tune-memory --swappiness 1 --thp madvise
+```
+
 ## Understanding Profiles
 
 | Profile | Governor | Boost | Use Case |
@@ -127,6 +150,7 @@ sudo amd-tuner profile server
 | powersave | powersave | off | Battery saving |
 | gaming | performance | on | Low latency gaming |
 | server | schedutil | on | Server workloads |
+| hpc | performance | on | Scientific computing, simulations |
 
 ## Dry Run Mode
 

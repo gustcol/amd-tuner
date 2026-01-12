@@ -3,23 +3,23 @@
 ## System Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        AMD Auto Tuner                           │
-├─────────────────────────────────────────────────────────────────┤
-│                          main.py                                │
-│                    (Orchestrator/CLI)                           │
-├──────────────┬──────────────┬──────────────┬───────────────────┤
-│              │              │              │                    │
-│  Hardware    │    CPU       │   Storage    │    Network        │
-│  Detector    │    Tuner     │   Tuner      │    Tuner          │
-│              │              │              │                    │
-├──────────────┴──────────────┴──────────────┴───────────────────┤
-│                        Benchmarker                              │
-├─────────────────────────────────────────────────────────────────┤
-│                      Config Manager                             │
-├─────────────────────────────────────────────────────────────────┤
-│                    Linux Kernel/sysfs                           │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            AMD Auto Tuner                                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                              main.py                                         │
+│                        (Orchestrator/CLI)                                    │
+├────────────┬────────────┬────────────┬────────────┬────────────┬───────────┤
+│            │            │            │            │            │            │
+│  Hardware  │    CPU     │  Storage   │  Network   │    HPC     │  Memory   │
+│  Detector  │   Tuner    │   Tuner    │   Tuner    │   Tuner    │  Tuner    │
+│            │            │            │            │            │            │
+├────────────┴────────────┴────────────┴────────────┴────────────┴───────────┤
+│                              Benchmarker                                     │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                            Config Manager                                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                          Linux Kernel/sysfs                                  │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ## Directory Structure
@@ -37,6 +37,8 @@ amd-auto-tuner/
 │   ├── cpu_tuner.py          # CPU optimization
 │   ├── storage_tuner.py      # Storage optimization
 │   ├── network_tuner.py      # Network optimization
+│   ├── hpc_tuner.py          # HPC/NUMA optimization
+│   ├── memory_tuner.py       # Memory subsystem optimization
 │   ├── benchmarker.py        # Performance benchmarking
 │   └── config_manager.py     # Configuration management
 │
@@ -141,6 +143,7 @@ Optimizes network interface performance:
 - Interrupt coalescing
 - Driver-specific optimizations
 - Sysctl tuning
+- High-speed NIC support (25G, 50G, 100G, 200G, 400G)
 
 **Sysctl Optimizations**:
 - Socket buffer sizes (rmem_max, wmem_max)
@@ -149,7 +152,71 @@ Optimizes network interface performance:
 - Congestion control (BBR, CUBIC)
 - TCP fast open, MTU probing
 
-### 6. Benchmarker (benchmarker.py)
+**Supported NICs**:
+- Intel: ice (E810), i40e (XL710), ixgbe, igb, e1000e
+- Mellanox: ConnectX-4/5/6/7 (mlx5_core)
+- Broadcom: bnxt_en
+- AMD/Pensando: ionic
+
+### 6. HPC Tuner (hpc_tuner.py)
+
+Optimizes systems for High-Performance Computing workloads:
+
+**NUMA Optimization**:
+- NUMA topology detection and mapping
+- Memory interleaving configuration
+- NUMA balancing control
+- Node-aware process placement
+
+**Huge Pages**:
+- 2MB and 1GB huge page allocation
+- Transparent Huge Pages (THP) management
+- Huge page pool configuration
+- NUMA-aware huge page distribution
+
+**IRQ Affinity**:
+- CPU affinity optimization for interrupts
+- Network IRQ distribution across NUMA nodes
+- Storage IRQ optimization
+
+**Process Affinity**:
+- CPU pinning recommendations
+- NUMA-aware task placement
+- Core isolation configuration
+
+**HPC Integration**:
+- MPI optimization hints and environment variables
+- SLURM configuration generation
+- OpenMP thread affinity settings
+- Kernel parameter optimization for HPC
+
+### 7. Memory Tuner (memory_tuner.py)
+
+Optimizes memory subsystem performance:
+
+**Memory Technology Support**:
+- HBM3 (High Bandwidth Memory) optimization
+- DDR5 configuration and tuning
+- Multi-channel memory optimization
+
+**NUMA Memory Management**:
+- NUMA balancing configuration
+- Memory policy settings
+- Inter-node memory migration control
+
+**Kernel Memory Settings**:
+- Swappiness tuning
+- Zone reclaim policy
+- Dirty ratio optimization
+- Page cache management
+- Writeback configuration
+
+**Transparent Huge Pages**:
+- THP enable/disable control
+- Defragmentation settings
+- khugepaged configuration
+
+### 8. Benchmarker (benchmarker.py)
 
 Measures system performance:
 
@@ -173,7 +240,7 @@ Measures system performance:
 - JSON result storage
 - Performance improvement calculation
 
-### 7. Config Manager (config_manager.py)
+### 9. Config Manager (config_manager.py)
 
 Handles configuration:
 
@@ -192,17 +259,17 @@ User Command → main.py → detect_hardware()
                               ↓
                     HardwareDetector.detect_all()
                               ↓
-              ┌───────────────┼───────────────┐
-              ↓               ↓               ↓
-         CPU Tuner    Storage Tuner    Network Tuner
-              ↓               ↓               ↓
-         create_backup() for each
-              ↓               ↓               ↓
-         apply_profile() for each
-              ↓               ↓               ↓
-         Write to sysfs / Run ethtool / sysctl
-              ↓
-         save_report()
+    ┌─────────────┬─────────────┬─────────────┬─────────────┬─────────────┐
+    ↓             ↓             ↓             ↓             ↓             ↓
+CPU Tuner   Storage Tuner Network Tuner  HPC Tuner   Memory Tuner
+    ↓             ↓             ↓             ↓             ↓
+create_backup() for each component
+    ↓             ↓             ↓             ↓             ↓
+apply_profile() for each component
+    ↓             ↓             ↓             ↓             ↓
+Write to sysfs / ethtool / sysctl / numactl
+                              ↓
+                         save_report()
 ```
 
 ### Benchmark Flow
@@ -243,13 +310,30 @@ User Command → main.py → run_benchmarks()
 - `/sys/class/net/*/mtu`
 - `/sys/class/net/*/tx_queue_len`
 
+**HPC/NUMA**:
+- `/sys/devices/system/node/node*/hugepages/`
+- `/sys/kernel/mm/hugepages/`
+- `/proc/sys/vm/nr_hugepages`
+- `/sys/devices/system/node/node*/cpulist`
+- `/proc/irq/*/smp_affinity`
+
+**Memory**:
+- `/proc/sys/vm/swappiness`
+- `/proc/sys/vm/dirty_ratio`
+- `/proc/sys/vm/dirty_background_ratio`
+- `/proc/sys/vm/zone_reclaim_mode`
+- `/sys/kernel/mm/transparent_hugepage/enabled`
+- `/proc/sys/kernel/numa_balancing`
+
 ### External Tools
 
 - `ethtool`: Ring buffers, offloads, coalescing
-- `sysctl`: Kernel network parameters
+- `sysctl`: Kernel network and memory parameters
 - `sysbench`: CPU benchmarking
 - `fio`: Storage benchmarking
 - `sensors`: Temperature monitoring
+- `numactl`: NUMA topology and memory policy
+- `cpupower`: CPU frequency and governor control
 
 ## Error Handling
 
